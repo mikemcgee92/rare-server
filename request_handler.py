@@ -2,6 +2,13 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
 
 from views.user import create_user, login_user
+from views import (
+    create_comment,
+    get_single_comment,
+    get_all_comments,
+    update_comment,
+    delete_comment
+)
 
 
 class HandleRequests(BaseHTTPRequestHandler):
@@ -51,7 +58,27 @@ class HandleRequests(BaseHTTPRequestHandler):
 
     def do_GET(self):
         """Handle Get requests to the server"""
-        pass
+        self._set_headers(200)
+        
+        response = {}
+        
+        parsed = self.parse_url(self.path)
+        
+        if '?' not in self.path:
+            (resource, id) = parsed
+            
+            if resource == 'comments':
+                if id is not None:
+                    response = get_single_comment(id)
+                else:
+                    response = get_all_comments()
+            # TODO add more blocks for other resources
+        
+        else:
+            (resource, query) = parsed
+            # TODO add blocks for other queries & resources
+
+        self.wfile.write(json.dumps(response).encode())
 
 
     def do_POST(self):
@@ -62,20 +89,49 @@ class HandleRequests(BaseHTTPRequestHandler):
         response = ''
         resource, _ = self.parse_url()
 
+        new_comment = None
+        
         if resource == 'login':
             response = login_user(post_body)
         if resource == 'register':
             response = create_user(post_body)
+        if resource == 'comments':
+            new_comment = create_comment(post_body)
 
         self.wfile.write(response.encode())
+        self.wfile.write(json.dumps(new_comment).encode())
 
     def do_PUT(self):
         """Handles PUT requests to the server"""
-        pass
+        content_len = int(self.headers.get('content-length', 0))
+        post_body = self.rfile.read(content_len)
+        post_body = json.loads(post_body)
+        
+        (resource, id) = self.parse_url(self.path)
+        
+        success = False
+        
+        if resource == 'comments':
+            success = update_comment(id, post_body)
+        
+        if success:
+            self._set_headers(204)
+        else:
+            self._set_headers(404)
+        
+        self.wfile.write("".encode())
 
     def do_DELETE(self):
         """Handle DELETE Requests"""
-        pass
+        self.__set_headers(204)
+        
+        (resource, id) = self.parse_url(self.path)
+        
+        if resource == "comments":
+            delete_comment(id)
+        # TODO add more blocks for other resources
+        
+        self.wfile.write("".encode())
 
 
 def main():
@@ -83,6 +139,7 @@ def main():
     """
     host = ''
     port = 8088
+    print("rare-server started!")
     HTTPServer((host, port), HandleRequests).serve_forever()
 
 

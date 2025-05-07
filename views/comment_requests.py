@@ -1,8 +1,9 @@
 from models import Comment
 import sqlite3
 
-# Get all comments on a single post
 def get_comments_on_post(post_id):
+  """ Gets all comments on a specific post """
+  
   with sqlite3.connect("./db.sqlite3") as conn:
     conn.row_factory = sqlite3.Row
     db_cursor = conn.cursor()
@@ -13,7 +14,7 @@ def get_comments_on_post(post_id):
       c.author_id,
       c.post_id,
       c.content
-    FROM comment c
+    FROM Comments c
     WHERE c.post_id = ?
     """, (post_id, ))
     
@@ -31,8 +32,9 @@ def get_comments_on_post(post_id):
   
   return comments
 
-# Get all comments by a specific user
 def get_comments_by_user(author_id):
+  """ Gets all comments by a specific user """
+  
   with sqlite3.connect("./db.sqlite3") as conn:
     conn.row_factory = sqlite3.Row
     db_cursor = conn.cursor()
@@ -43,7 +45,7 @@ def get_comments_by_user(author_id):
       c.author_id,
       c.post_id,
       c.content
-    FROM comment c
+    FROM Comments c
     WHERE c.author_id = ?
     """, (author_id, ))
     
@@ -61,8 +63,9 @@ def get_comments_by_user(author_id):
   
   return comments
 
-# Get a single comment
 def get_single_comment(id):
+  """ Gets a single comment """
+  
   with sqlite3.connect("./db.sqlite3") as conn:
     conn.row_factory = sqlite3.Row
     db_cursor = conn.cursor()
@@ -73,7 +76,7 @@ def get_single_comment(id):
       c.author_id,
       c.post_id,
       c.content
-    FROM comment c
+    FROM Comments c
     WHERE c.id = ?
     """, (id, ))
     
@@ -86,10 +89,11 @@ def get_single_comment(id):
       data['content']
     )
   
-  return comment
+  return comment.__dict__
 
-# Get all comments ... not sure if this has any practical use, but it is an available function
+# not sure if this has any practical use, but it is an available function
 def get_all_comments():
+  """ Gets all comments in the database """
   with sqlite3.connect("./db.sqlite3") as conn:
     conn.row_factory = sqlite3.Row
     db_cursor = conn.cursor()
@@ -100,7 +104,7 @@ def get_all_comments():
       c.author_id,
       c.post_id,
       c.content
-    FROM comment c
+    FROM Comments c
     """)
     
     comments = []
@@ -117,8 +121,9 @@ def get_all_comments():
   
   return comments
 
-# Create a comment on a post
 def create_comment(new_comment):
+  """ Creates a comment on a post """
+  
   with sqlite3.connect("./db.sqlite3") as conn:
     db_cursor = conn.cursor()
     
@@ -135,8 +140,9 @@ def create_comment(new_comment):
   
   return new_comment
 
-# Edit a comment
 def update_comment(id, new_comment):
+  """ Updates a comment """
+  
   with sqlite3.connect("./db.sqlite3") as conn:
     db_cursor = conn.cursor()
     
@@ -156,8 +162,9 @@ def update_comment(id, new_comment):
   else:
     return True #status code 204
 
-# Remove a comment
 def delete_comment(id):
+  """ Removes a comment """
+  
   with sqlite3.connect("./db.sqlite3") as conn:
     db_cursor = conn.cursor()
     

@@ -134,21 +134,21 @@ class HandleRequests(BaseHTTPRequestHandler):
 
         (resource, resource_id) = self.parse_url()
 
-        response = {}
+        success = False
 
         if resource == "comments":
-            response = update_comment(resource_id, post_body)
+            success= update_comment(resource_id, post_body)
         elif resource == "categories":
-            response = update_category(resource_id, post_body)
+            success= update_category(resource_id, post_body)
         elif resource == "tags":
-            response = update_tag(resource_id, post_body)
+            success= update_tag(resource_id, post_body)
 
-        if "status" in response and response["status"] == 404:
-            self._set_headers(404)
-        else:
+        if success:
             self._set_headers(204)
+        else:
+            self._set_headers(404)
 
-        self.wfile.write(json.dumps(response).encode())
+        self.wfile.write("".encode())
 
     def do_DELETE(self):
         """Handle DELETE Requests"""

@@ -4,27 +4,27 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 from views import (
     create_category,
     create_comment,
+    create_post,
     create_tag,
     delete_category,
     delete_comment,
+    delete_post,
     delete_tag,
     get_all_categories,
     get_all_comments,
+    get_all_posts,
     get_all_tags,
     get_comments_by_user,
     get_comments_on_post,
+    get_posts_by_category_id,
+    get_posts_by_user_id,
     get_single_category,
     get_single_comment,
     get_single_tag,
     update_category,
     update_comment,
-    update_tag,
-    get_all_posts,
-    get_posts_by_category_id,
-    get_posts_by_user_id,
-    create_post,
     update_post,
-    delete_post,
+    update_tag,
 )
 from views.user import create_user, login_user
 
@@ -152,13 +152,13 @@ class HandleRequests(BaseHTTPRequestHandler):
         success = False
 
         if resource == "comments":
-            success= update_comment(resource_id, post_body)
+            success = update_comment(resource_id, post_body)
         elif resource == "categories":
-            success= update_category(resource_id, post_body)
+            success = update_category(resource_id, post_body)
         elif resource == "tags":
-            success= update_tag(resource_id, post_body)
+            success = update_tag(resource_id, post_body)
         elif resource == "posts":
-            success= update_post(resource_id, post_body)
+            success = update_post(resource_id, post_body)
 
         if success:
             self._set_headers(204)

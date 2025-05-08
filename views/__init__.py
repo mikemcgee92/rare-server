@@ -14,14 +14,12 @@ from views.comment_requests import (
     get_single_comment,
     update_comment,
 )
-
 from views.post_requests import (
+    create_post,
+    delete_post,
     get_all_posts,
     get_posts_by_category_id,
     get_posts_by_user_id,
-    create_post,
     update_post,
-    delete_post,
 )
-
 from views.tag import create_tag, delete_tag, get_all_tags, get_single_tag, update_tag

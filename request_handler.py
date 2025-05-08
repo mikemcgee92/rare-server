@@ -19,6 +19,12 @@ from views import (
     update_category,
     update_comment,
     update_tag,
+    get_all_posts,
+    get_posts_by_category_id,
+    get_posts_by_user_id,
+    create_post,
+    update_post,
+    delete_post,
 )
 from views.user import create_user, login_user
 
@@ -93,6 +99,8 @@ class HandleRequests(BaseHTTPRequestHandler):
                     response = get_single_tag(resource_id)
                 else:
                     response = get_all_tags()
+            elif resource == "posts":
+                response = get_all_posts()
 
         else:
             (resource, key, value) = parsed
@@ -102,6 +110,11 @@ class HandleRequests(BaseHTTPRequestHandler):
                     response = get_comments_by_user(value)
                 elif key == "post_id":
                     response = get_comments_on_post(value)
+            elif resource == "posts":
+                if key == "user_id":
+                    response = get_posts_by_user_id(int(value))
+                elif key == "category_id":
+                    response = get_posts_by_category_id(int(value))
 
         self.wfile.write(json.dumps(response).encode())
 
@@ -123,6 +136,8 @@ class HandleRequests(BaseHTTPRequestHandler):
             response = create_category(post_body)
         elif resource == "tags":
             response = create_tag(post_body)
+        elif resource == "posts":
+            response = create_post(post_body)
 
         self.wfile.write(json.dumps(response).encode())
 
@@ -142,6 +157,8 @@ class HandleRequests(BaseHTTPRequestHandler):
             success= update_category(resource_id, post_body)
         elif resource == "tags":
             success= update_tag(resource_id, post_body)
+        elif resource == "posts":
+            success= update_post(resource_id, post_body)
 
         if success:
             self._set_headers(204)
@@ -162,6 +179,8 @@ class HandleRequests(BaseHTTPRequestHandler):
             delete_category(resource_id)
         elif resource == "tags":
             delete_tag(resource_id)
+        elif resource == "posts":
+            delete_post(resource_id)
 
         self.wfile.write("".encode())
 
